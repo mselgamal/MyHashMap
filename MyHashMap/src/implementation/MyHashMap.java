@@ -81,6 +81,11 @@ public class MyHashMap<K, V> {
 		return key.hashCode() % this.capacity;
 	}
 	
+	/**
+	 * hash map size
+	 * 
+	 * @return capacity
+	 */
 	public int capacity() {
 		return this.capacity;
 	}
