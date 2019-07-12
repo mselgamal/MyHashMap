@@ -47,15 +47,47 @@ public class MyHashMap<K, V> {
 	}
 	
 	/**
+	 * tests if a number n is prime, O(sqr(n))
+	 * 
+	 * @param n
+	 * @return
+	 */
+	private boolean isPrime(int n) {
+		int i = 5;
+		
+		if (n % 2 == 0 || n % 3 == 0) {
+			return false;
+		}
+		
+		/**
+		 * assumptions that i = 5 (initial value) is true
+		 * then following must hold:
+		 * initial value for i is prime
+		 * prime + 6 = prime number
+		 * prime + 2 = next prime number or multiple of 5
+		 */
+		while (i * i <= n) {
+			if (n % i == 0 || n % (i+2) == 0) {
+				return false;
+			}
+			i = i + 6;
+		}
+		return true;
+	}
+	
+	/**
 	 * starting from current capacity * 2, 
-	 * compute next largest prime <= capacity * 2
+	 * select next largest prime <= capacity * 2
 	 * 
 	 * @param capacity
 	 * @return new capacity
 	 */
 	
 	private int recomputeCapacity(int capacity) {
-		return 0;
+		while (!this.isPrime(capacity)) {
+			capacity--;
+		}
+		return capacity;
 	}
 	
 	/**
@@ -100,7 +132,7 @@ public class MyHashMap<K, V> {
 	}
 	
 	/**
-	 * number of items in hashmap
+	 * number of items in hash map
 	 * 
 	 * @return number of entries in HashMap
 	 */
@@ -109,7 +141,7 @@ public class MyHashMap<K, V> {
 	}
 	
 	/**
-	 * puts a <key, value> pair in hashmap
+	 * puts a <key, value> pair in hash map
 	 * 
 	 * @param key 
 	 * @param value
@@ -156,7 +188,8 @@ public class MyHashMap<K, V> {
 	
 	/**
 	 * A bucket is a Singly-linked list for storing entries in hashmap
-	 * it's expected that majority of buckets will only have a single node
+	 * it's expected that majority of buckets will only have a single node or 
+	 * constant number of items
 	 * 
 	 * @author Mamdouh Elgamal
 	 *
@@ -167,16 +200,16 @@ public class MyHashMap<K, V> {
 	private class Bucket<K, V> {
 		
 		/**
-		 * first node in the linked list
+		 * first item in the bucket list
 		 */
 		private Item<K, V> head;
 		/**
-		 * linked list size
+		 * bucket list size
 		 */
 		private int length;
 		
 		/**
-		 * inserts <key, value> to linked list
+		 * inserts item with <key, value> to bucket list
 		 * 
 		 * @param key
 		 * @param value
@@ -187,9 +220,15 @@ public class MyHashMap<K, V> {
 			curr.key = key;
 			curr.value = value;
 			this.head = curr;
-			this.length += 1;
+			this.length++;
 		}
 		
+		/**
+		 * search for item in bucket list, where item.key equals parameter key
+		 * 
+		 * @param key
+		 * @return item or null if no item found
+		 */
 		private Item<K, V> find(K key) {
 			Item<K, V> curr = this.head;
 			while (curr != null) {
@@ -199,12 +238,25 @@ public class MyHashMap<K, V> {
 			return null;
 		}
 		
+		/**
+		 * get item from bucket list, where item.key equals parameter key
+		 * 
+		 * @param key
+		 * @return item value or null if no item exist
+		 */
 		public V get(K key) {
 			Item<K, V> node = this.find(key);
 			if (node != null) return node.value;
 			return null;
 		}
 		
+		/**
+		 * remove item from bucket list, where item.key equals parameter key
+		 * throw exception if item not found
+		 * 
+		 * @param key
+		 * @return item value
+		 */
 		public V remove(K key) {
 			Item<K, V> curr = this.head, prev = null;
 			while (curr != null) {
@@ -220,9 +272,21 @@ public class MyHashMap<K, V> {
 			} else {
 				prev.next = curr.next;
 			}
+			this.length--;
+			
 			return curr.value;
 		}
 		
+		
+		/**
+		 * Object template for an item in a bucket, each item has a generic <key, value> 
+		 * and reference to neighbor item -> item.next
+		 * 
+		 * @author Mamdouh Elgamal
+		 *
+		 * @param <K>
+		 * @param <V>
+		 */
 		private class Item<K, V>{
 			private K key;
 			private V value;

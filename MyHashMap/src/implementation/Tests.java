@@ -19,6 +19,7 @@ public class Tests {
 		}
 		
 		assertEquals(1000, map.size());
+		assertEquals(1993, map.capacity());
 	}
 	
 	@Test
@@ -30,28 +31,28 @@ public class Tests {
 		}
 		
 		assertEquals(2000, map.size());
+		assertEquals(3967, map.capacity());
 		
 		assertEquals(0.5f, map.loadFactor(), .01f);
 	}
 	
-	/**@Test
+	@Test
 	public void putAndGetWithCollisions() {
-		MyHashMap<Integer, Integer> map = new MyHashMap<Integer, Integer>();
-		
-		for (int i = 0; i < 1200 ; i++) {
-			try {
-				map.put(i,  i);
-			} catch (Exception e) {
-				fail(e.getMessage());
-			}
-		}
-		
-		for (int i = 0; i < 1200 ; i++) {
-			assertEquals((Integer) i, map.get(i));
-		}
-		
-		assertEquals(1200, map.size());
-	}*/
+		MyHashMap<String, Integer> map = new MyHashMap<String, Integer>();
+		map.put("BBBB", 1);
+		map.put("AaAa", 1);
+		map.put("AaBB", 2);
+		map.put("BBAa", 2);
+		map.put("Aa", 1);
+		map.put("BB", 2);
+		assertEquals((Integer)1, map.get("Aa"));
+		assertEquals((Integer)2, map.get("BB"));
+		assertEquals((Integer)1, map.get("AaAa"));
+		assertEquals((Integer)1, map.get("BBBB"));
+		assertEquals((Integer)2, map.get("BBAa"));
+		assertEquals((Integer)2, map.get("AaBB"));
+		assertEquals(6, map.size());
+	}
 	
 	@Test
 	public void removeNoCollisions() {
@@ -73,23 +74,35 @@ public class Tests {
 		assertEquals(996, map.size());
 	}
 	
-	/**@Test
+	@Test
 	public void removeWithCollisions() {
-		MyHashMap<Integer, Integer> map = new MyHashMap<Integer, Integer>();
+		MyHashMap<String, Integer> map = new MyHashMap<String, Integer>();
+		map.put("BBBB", 1);
+		map.put("AaAa", 1);
+		map.put("AaBB", 2);
+		map.put("BBAa", 2);
+		map.put("Aa", 1);
+		map.put("BB", 2);
 		
-		for (int i = 0; i < 2000 ; i++) {
-			try {
-				map.put(i,  i);
-			} catch (Exception e) {
-				fail(e.getMessage());
-			}
-		}
+		assertEquals((Integer)1, map.get("Aa"));
+		assertEquals((Integer)2, map.get("BB"));
+		assertEquals((Integer)1, map.get("AaAa"));
+		assertEquals((Integer)1, map.get("BBBB"));
+		assertEquals((Integer)2, map.get("BBAa"));
+		assertEquals((Integer)2, map.get("AaBB"));
 		
-		map.remove(1200);
-		map.remove(200);
+		map.remove("Aa");
+		map.remove("BBAa");
 		
-		assertEquals(1998, map.size());
-	}*/
+		assertEquals(null, map.get("Aa"));
+		assertEquals((Integer)2, map.get("BB"));
+		assertEquals((Integer)1, map.get("AaAa"));
+		assertEquals((Integer)1, map.get("BBBB"));
+		assertEquals(null, map.get("BBAa"));
+		assertEquals((Integer)2, map.get("AaBB"));
+		
+		assertEquals(4, map.size());
+	}
 	
 	@Test
 	public void exceptionOnInvalidRemove() {
